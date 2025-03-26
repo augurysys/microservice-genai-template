@@ -1,0 +1,4 @@
+ai-logger @ git+https://github.com/augurysys/ai-logger.git@0.2.0
+auguryapi @ git+https://github.com/augurysys/auguryapi-py.git@0.9.40
+git+https://github.com/augurysys/augury-data-api.git@0.4.4
+python-sdk-auth @ git+https://github.com/augurysys/python-sdk-auth.git@1.0.1

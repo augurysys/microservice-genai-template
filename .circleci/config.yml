@@ -1,0 +1,38 @@
+version: 2.1
+
+setup: true
+
+orbs:
+  continuation: circleci/continuation@0.1.2
+
+jobs:
+  setup:
+    executor: continuation/default
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Get circleci-configurtion
+          command: |
+            cd .circleci
+            git clone https://${GITHUB_TOKEN}:@github.com/augurysys/circleci-configuration.git --depth 1 --branch master
+            mv ./circleci-configuration/* ./
+      - run: sudo apt-get update && sudo apt-get install -y python3 python3-pip
+      - run: pip install pyyaml
+      - run:
+          name: Generate config
+          command: |
+            cd .circleci
+            python3 generate_config.py python
+      - run:
+          name: Configuration to be executed
+          command: cat .circleci/generated_config.yaml
+      - continuation/continue:
+          configuration_path: .circleci/generated_config.yaml
+
+workflows:
+  setup:
+    jobs:
+      - setup:
+          context:
+            - github

@@ -1,0 +1,84 @@
+{{- $secretMountPath := "/etc/gcloud/service-account.json" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "microservice-genai-template.name" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "microservice-genai-template.name" . }}
+{{ include "microservice-genai-template.labels" . | indent 4 }}
+  annotations:
+    configmap.reloader.stakater.com/reload: "augury-common-services,augury-common-mongodb,augury-common-fst"
+    secret.reloader.stakater.com/reload: "augury-common-mongodb,augury-common-fst"
+spec:
+  replicas: {{ .Values.api.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "microservice-genai-template.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "microservice-genai-template.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- if .Values.serviceAccount.enabled }}
+      volumes:
+        - name: "{{ .Values.serviceAccount.name }}"
+          secret:
+            secretName: "{{ .Values.serviceAccount.name }}"
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.registry }}/microservice-genai-template:{{ .Values.image.tag }}"
+          args: ["api"]
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.serviceAccount.enabled }}
+          volumeMounts:
+            - name: "{{ .Values.serviceAccount.name }}"
+              readOnly: true
+              mountPath: {{ $secretMountPath }}
+              subPath: service-account.json
+          {{- end }}
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: {{ $secretMountPath }}
+
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}
+            - secretRef:
+                name: {{ .Chart.Name }}
+            # bring common environment variables
+            - configMapRef:
+                name: augury-common-services
+            # add here if you need redis / scylla / mongodb. dont forget to add it in anotations reloader!
+            - configMapRef:
+                name: augury-common-mongodb
+            - configMapRef:
+                name: augury-common-nsq
+            - secretRef:
+                name: augury-common-mongodb
+            - configMapRef:
+                name: augury-common-nsq
+            - configMapRef:
+                name: augury-common-fst
+            - secretRef:
+                name: augury-common-fst
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.api.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+{{- end }}

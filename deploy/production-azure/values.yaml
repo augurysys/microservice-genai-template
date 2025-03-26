@@ -1,0 +1,30 @@
+image:
+  registry: augury.azurecr.io
+  tag: master
+  pullPolicy: IfNotPresent
+envVars:
+  oauth2ClientId: NGU0NzY2YjgtMDUwOC00ZWM1LWIzNWUtYWE5NGY1OTJjOGRj
+  azureDeployment: gpt-4o
+  openaiModelVersion: 2023-03-15-preview
+  azureOpenaiEndpoint: https://augury-gen-ai.openai.azure.com/
+  langchainTracing: "true"
+nodeSelector:
+  data-micrsoservices-node: 'true'
+tolerations:
+- key: data-micrsoservices-node
+  operator: Equal
+  value: 'true'
+  effect: NoSchedule
+- key: kubernetes.azure.com/scalesetpriority
+  operator: Equal
+  value: spot
+  effect: NoSchedule
+api:
+  replicaCount: 2
+  resources:
+     limits:
+       cpu: 60m
+       memory: 100Mi
+     requests:
+       cpu: 50m
+       memory: 100Mi

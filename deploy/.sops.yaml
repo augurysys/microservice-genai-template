@@ -1,0 +1,5 @@
+creation_rules:
+- path_regex: staging-azure/secrets\.yaml$
+  gcp_kms: projects/staging-eabb77f6/locations/us-east1/keyRings/helm/cryptoKeys/secrets
+- path_regex: production-azure/secrets\.yaml$
+  gcp_kms: projects/production-02cb28ec/locations/us-east1/keyRings/helm/cryptoKeys/secrets

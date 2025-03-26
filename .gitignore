@@ -1,0 +1,14 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/
+.vscode
+*.iml
+*.pyc
+bin*
+/.project
+csrf_token
+*.cache/
+*.env
+Pipfile*
+telepresence.log
+venv/
+/virt/

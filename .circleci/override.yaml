@@ -1,0 +1,39 @@
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.10.10
+    working_directory: ~/microservice-genai-template
+    steps:
+      - checkout
+      - run:
+          name: Install azure cli
+          command: |
+            curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      - run:
+          name: Login to Azure
+          command: az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
+      - run: sudo apt-get install -y
+      - run: git config --global credential.helper store
+      - run: echo "https://${GITHUB_TOKEN}:@github.com" >> ~/.git-credentials
+      - run: git config --global --unset url.ssh://git@github.com.insteadof
+      - run: git config --global url."https://github.com".insteadOf "ssh://git@github.com" || true
+      - run: echo "export AI_MODELS_ACCOUNT_NAME=$AI_MODELS_ACCOUNT_NAME" >> $BASH_ENV
+      - run: echo "export AI_MODELS_ACCOUNT_KEY=$AI_MODELS_ACCOUNT_KEY" >> $BASH_ENV
+      - run: python3 -m pip install --upgrade pip
+      - run: pip install -r requirements.txt --user
+      - run: pip install -r requirements-internal.txt --user --no-deps
+      - run: pytest
+
+workflows:
+  test_push_deploy:
+    jobs:
+      - build:
+          context:
+            - github
+            - gcloud-production
+            - azure-production
+      - test:
+          context:
+            - github
+            - ai-models
+            - azure-dev

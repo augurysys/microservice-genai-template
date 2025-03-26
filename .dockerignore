@@ -1,0 +1,6 @@
+/.git
+Dockerfile
+/deploy
+/.circleci
+/.tool-versions
+/.fossa.yaml

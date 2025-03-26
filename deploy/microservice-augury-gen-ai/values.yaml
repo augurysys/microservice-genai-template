@@ -1,0 +1,41 @@
+# Default values for microservice-genai-template.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+image:
+  registry: us.gcr.io/production-02cb28ec
+  tag:
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+metrics:
+  enabled: true
+  port: 9020
+
+tolerations: {}
+nodeSelector: {}
+affinity: {}
+serviceAccount:
+# if you need a service account, change enabled to true and add the name (can be done by env)
+  # name:
+  enabled: false
+
+api:
+  enabled: true
+  replicaCount: 1
+  hpa:
+  # if you need HPA, change enabled to true and add the values (can be done by env)
+    # minReplicas: 2
+    # maxReplicas: 4
+    # targetCpuAverage: 70
+    # targetMemoryAverage: 70
+    enabled: false
+  resources:
+    limits:
+      cpu: 70m
+      memory: 100Mi
+    requests:
+      cpu: 60m
+      memory: 100Mi

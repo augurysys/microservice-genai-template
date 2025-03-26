@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app.kubernetes.io/name: {{ include "microservice-genai-template.name" . }}
+{{ include "microservice-genai-template.labels" . | indent 4 }}
+data:
+  GIT_COMMIT: {{ .Values.image.tag }}
+  OAUTH2_CLIENT_ID: {{ .Values.envVars.oauth2ClientId }}
+  AZURE_DEPLOYMENT: {{ .Values.envVars.azureDeployment }}
+  OPENAI_MODEL_VERSION: {{ .Values.envVars.openaiModelVersion }}
+  AZURE_OPENAI_ENDPOINT: {{ .Values.envVars.azureOpenaiEndpoint }}
+  LANGCHAIN_TRACING_V2: {{ .Values.envVars.langchainTracing | quote }}

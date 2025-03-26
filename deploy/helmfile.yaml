@@ -1,0 +1,14 @@
+releases:
+  - name: microservice-genai-template
+    namespace: default
+    labels:
+      job: microservice-genai-template
+    chart: ./microservice-genai-template
+    values:
+    - microservice-genai-template/values.yaml
+    - "{{ requiredEnv "AUGURY_ENV" }}/values.yaml"
+    - image:
+        tag: "{{ requiredEnv "CIRCLE_SHA1" }}"
+    secrets:
+    - "{{ requiredEnv "AUGURY_ENV" }}/secrets.yaml"
+    wait: true

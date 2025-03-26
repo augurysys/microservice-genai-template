@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+LC_ALL=C
+
+# validate branch name
+local_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+if [[ $local_branch == *"_"* || $local_branch == *"/"* || $local_branch == *"\\"* ]]
+then
+    echo "There is something wrong with your branch name. should not contain \\ or _ or /"
+    exit 1
+fi
+
+if [[ ${#local_branch} > 31 ]]
+then
+    echo "Branch name cant exceed 31 chars"
+    exit 1
+fi
+
+exit 0 
