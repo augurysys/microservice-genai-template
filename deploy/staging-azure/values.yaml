@@ -3,7 +3,6 @@ image:
   tag:
   pullPolicy: IfNotPresent
 envVars:
-  oauth2ClientId: NGU0NzY2YjgtMDUwOC00ZWM1LWIzNWUtYWE5NGY1OTJjOGRj
   azureDeployment: gpt-4o
   openaiModelVersion: 2023-03-15-preview
   azureOpenaiEndpoint: https://aiva-dev-resource.openai.azure.com/
