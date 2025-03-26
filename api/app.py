@@ -4,7 +4,6 @@ from contextlib import asynccontextmanager
 import uvicorn
 from api.routers import overview_route
 from utils.log_wrapper import LogWrapper
-from augury_data_api.monitoring.augury_metrics import expose_metrics
 from starlette.middleware import Middleware
 
 from utils.RequestBodyMiddleware import CacheRequestBodyMiddleware
@@ -16,7 +15,6 @@ from auth_sdk.auth_middleware import AuthenticationMiddleware
 from auth_sdk.init import init_oauth_client
 from routers import health_check
 from utils.logger import LogRequestMiddleware, get_logger
-
 
 
 @asynccontextmanager
@@ -40,11 +38,6 @@ app.include_router(health_check.router)
 
 # example domain routes
 app.include_router(overview_route.router)
-
-expose_prometheus = os.environ.get("EXPOSE_PROMETHEUS", 'false')
-logger.info(f"Start up event - Exposing Metrics set to: {expose_prometheus}")
-expose_metrics(app, expose_prometheus)
-
 
 @asynccontextmanager
 async def lifespan_gen_ai(_app: FastAPI):
