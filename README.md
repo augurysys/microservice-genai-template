@@ -1,29 +1,22 @@
-# microservice-genai-template
-
 # 🗂️ Project Structure
 
 ### 📁 `agents/`
 > Agent and chain definitions  
 Each agent can be modular (with prompt templates, tools, and LangGraph/LangChain logic). Useful for multi-agent systems.
 
-### 📄 `workflow.py`  
-> Workflow orchestration
-
-### 📄 `state.py`  
-> Shared state definitions
-
-### 📁 `example_agent1/`
-> Specific agent type  
-- 📁 `prompts/` – Prompt templates  
-- 📄 `agent.py` – Agent logic (e.g., workflow, automation, RAG)
+- 📄 `workflow.py` – Workflow orchestration
+- 📄 `state.py` – Shared state definitions
+- 📁 `example_agent1/` – Specific agent type
+  - 📁 `prompts/` – Prompt templates
+  - 📄 `agent.py` – Agent logic (e.g., workflow, automation, RAG)
 
 ---
 
 ### 📁 `core/`
 > 🔧 LLM core logic  
 - LLM instantiation  
-- Evaluation utils  
-- LangSmith integration
+- Generic evaluation logic  
+- LangSmith tracing integration
 
 ### 📁 `api/`
 > 🚀 FastAPI routers & endpoints
@@ -32,32 +25,38 @@ Each agent can be modular (with prompt templates, tools, and LangGraph/LangChain
 > 🧱 Pydantic schemas for request/response bodies
 
 ### 📁 `tests/`
-> 🧪 Tests for agents, prompts, API
+> 🧪 Unit & integration tests  
+- Agents  
+- Prompts  
+- API endpoints
 
 ### 📁 `ingestion/`
-> 📥 Data ingestion + embedding creation
+> 📥 Data ingestion & embedding creation
 
 ### 📁 `tools/`
-> 🛠️ Reusable tools for agents
+> 🛠️ Reusable tools across agents
 
 ### 📁 `memory/`
-> 🧠 Short-term & long-term memory modules
+> 🧠 Agent memory modules  
+- Short-term memory  
+- Long-term memory
 
 ---
 
 ### 📁 `evaluations/`
-> 📊 Evaluation methods  
-- 📁 `llm_as_a_judge/` – Use LLMs for eval  
-- 📁 `dataset_eval/` – Dataset-driven eval
+> 📊 Evaluation implementations
+
+- 📁 `llm_as_a_judge/` – Evaluation via LLM feedback
+- 📁 `dataset_eval/` – Dataset-based performance eval
 
 ### 📁 `utils/`
-> ⚙️ Utility functions
+> ⚙️ General utility functions
 
 ### 📁 `async/`
 > 🔄 Async event entry point
 
 ### 📁 `repository/`
-> 🗃️ DB layer (persistence logic)
+> 🗃️ Database access and persistence layer
 
 ### 📁 `logic/`
-> 🧩 *(Optional)* Domain/business logic layer
+> 🧩 *(Optional)* Domain/business logic (if a service layer is needed)
