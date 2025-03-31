@@ -2,7 +2,8 @@ import logging
 import os
 from contextlib import asynccontextmanager
 import uvicorn
-from api.routers import overview_route
+
+from api.routers import support_response_route
 from utils.log_wrapper import LogWrapper
 from starlette.middleware import Middleware
 
@@ -13,7 +14,6 @@ from pymongo import MongoClient
 from raven import Client as RavenClient
 from auth_sdk.auth_middleware import AuthenticationMiddleware
 from auth_sdk.init import init_oauth_client
-from routers import health_check
 from utils.logger import LogRequestMiddleware, get_logger
 
 
@@ -37,7 +37,8 @@ app = FastAPI(title="AuguryGenAIAPI", lifespan=lifespan_main, middleware=middlew
 app.include_router(health_check.router)
 
 # example domain routes
-app.include_router(overview_route.router)
+app.include_router(support_response_route.router)
+
 
 @asynccontextmanager
 async def lifespan_gen_ai(_app: FastAPI):
