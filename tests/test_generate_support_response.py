@@ -1,20 +1,12 @@
-from typing import Dict, Optional, Any
-from unittest.mock import MagicMock
-
-from starlette.testclient import TestClient
-
-from api.app import app
-from core.llms.llm import ChainResult, LLMFactory
-
-client = TestClient(app)
+from models.generate_support_response_request import GenerateSupportResponseRequest
 
 
-
-
-
-def test_generate_support_response():
-    app.dependency_overrides[LLMFactory.create_chain] = mock_base_chain
-    print("Dependency override applied")
-    response = client.get("/")
+def test_health_check(client):
+    response = client.get("/_ping")
     assert response.status_code == 200
-    assert response.json() == {"msg": "Hello World"}
+
+
+def test_generate_support_response(client):
+    request = GenerateSupportResponseRequest(domain_data="hello", query="hello")
+    response = client.post("/support/generate/support_response", json=request.dict())
+    assert response.status_code == 200
