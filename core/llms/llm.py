@@ -10,13 +10,13 @@ MissingProjectError = ValueError("project name is required, it will separate the
 
 
 class ChainResult:
-    def __init__(self, result: LLMResult, run_id: uuid):
+    def __init__(self, result, run_id: uuid):
         self.result = result
         self.run_id = run_id
 
 
 class BaseChain:
-    def __init__(self, llm: ChatOpenAI, project_name: str):
+    def __init__(self, llm: AzureChatOpenAI, project_name: str):
         self.llm = llm
         self.project_name = project_name
         if not project_name or project_name == "":
@@ -32,7 +32,7 @@ class BaseChain:
         try:
             from langchain_core.tracers.context import tracing_v2_enabled
             with tracing_v2_enabled(project_name=self.project_name):
-                response: LLMResult = self.llm.invoke(prompt)
+                response = self.llm.invoke(prompt)
                 run_manager.on_chain_end(outputs={"result": response})
 
         except Exception as e:
@@ -52,7 +52,7 @@ class LLMConfig:
 
 class LLMFactory:
     @staticmethod
-    def create_llm(llm_config: LLMConfig = None, **kwargs: Any) -> ChatOpenAI:
+    def create_llm(llm_config: LLMConfig = None, **kwargs: Any) -> AzureChatOpenAI:
         return AzureChatOpenAI(
             model_name=llm_config.model_name,
             temperature=llm_config.temperature,
@@ -60,7 +60,7 @@ class LLMFactory:
             api_key=llm_config.api_key, **kwargs)
 
     @staticmethod
-    def create_chain() -> BaseChain:
-        return BaseChain(LLMFactory.create_llm())
+    def create_chain(project_name: str) -> BaseChain:
+        return BaseChain(project_name=project_name, llm=LLMFactory.create_llm())
 
 

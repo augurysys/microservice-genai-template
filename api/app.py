@@ -2,19 +2,20 @@ import logging
 import os
 from contextlib import asynccontextmanager
 import uvicorn
-from api.routers import overview_route
-from utils.log_wrapper import LogWrapper
-from starlette.middleware import Middleware
+from auth_sdk.init import init_oauth_client
+from raven import Client as RavenClient
 
-from utils.RequestBodyMiddleware import CacheRequestBodyMiddleware
+from api.app_context import AppContext
+from api.bootstrap import create_app
+
 from fastapi import FastAPI
 from langchain_openai import AzureOpenAIEmbeddings
 from pymongo import MongoClient
-from raven import Client as RavenClient
-from auth_sdk.auth_middleware import AuthenticationMiddleware
-from auth_sdk.init import init_oauth_client
-from routers import health_check
-from utils.logger import LogRequestMiddleware, get_logger
+
+from utils.log_wrapper import LogWrapper
+from utils.logger import get_logger
+
+logger = LogWrapper(get_logger(name="Main", log_level=logging.INFO), RavenClient())
 
 
 @asynccontextmanager
@@ -22,22 +23,10 @@ async def lifespan_main(_app: FastAPI):
     async with lifespan_gen_ai(_app):
         yield
 
+app = create_app(context=AppContext().
+                 set("oauth_client", init_oauth_client())
+                 .set("logger", logger), lifespan_main=lifespan_main)
 
-logger = LogWrapper(get_logger(name="Main", log_level=logging.INFO), RavenClient())
-oauth_client_internal = init_oauth_client()
-
-middlewares = [
-    Middleware(CacheRequestBodyMiddleware, logger=logger),
-    Middleware(LogRequestMiddleware, logger=logger),
-    Middleware(AuthenticationMiddleware, logger=logger, oauth_client=oauth_client_internal,
-               scopes="augury,user")
-]
-
-app = FastAPI(title="AuguryGenAIAPI", lifespan=lifespan_main, middleware=middlewares)
-app.include_router(health_check.router)
-
-# example domain routes
-app.include_router(overview_route.router)
 
 @asynccontextmanager
 async def lifespan_gen_ai(_app: FastAPI):
