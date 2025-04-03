@@ -1,5 +1,4 @@
 from ai_logger.log_wrapper import LogWrapper
-from langchain.chains.conversation.base import ConversationChain
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate, FewShotPromptTemplate
 
@@ -40,7 +39,7 @@ class FewShotsGenerator:
             Specific Data:
             {domain_data}\n
             Output Instructions:
-            Please provide your JSON result in the following format:
+
             {output_instructions}\n
             """,
             input_variables=["base_prompt", "few_shots", "domain_data", "output_instructions", "query"]
@@ -71,12 +70,7 @@ class FewShotsGenerator:
             self.logger.info(f"prompt: {prompt}")
             self.logger.info(f"executing chain")
             try:
-                conversation = ConversationChain(
-                    llm=self.llm,
-                    memory=self.memory,
-                    prompt=final_prompt
-                )
-                res = conversation.run_chain(prompt_template=final_prompt, prompt={"input": prompt})
+                res = self.invoke(final_prompt.format(input=prompt))
                 self.logger.info(res)
             except Exception as e:
                 self.logger.info(f"failed to execute chain: {e}")
@@ -86,11 +80,14 @@ class FewShotsGenerator:
                 self.logger.info(f"parsed output {parsed}")
                 return parsed
             except Exception as e:
-                self.logger.info(f"failed to parse response from model response: {e}")
+                self.logger.info(f"failed to parse response: {e}")
                 raise e
         except Exception as e:
             self.logger.info(f"failed to generate with few shots: {e}")
             raise e
+
+    def invoke(self, prompt: str):
+        return self.llm.invoke(prompt)
 
     def validate_input(self):
         if self.llm is None:

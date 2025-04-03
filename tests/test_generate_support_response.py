@@ -8,5 +8,6 @@ def test_health_check(client):
 
 def test_generate_support_response(client):
     request = GenerateSupportResponseRequest(domain_data="hello", query="hello")
+    # TODO replace with SDK call
     response = client.post("/support/generate/support_response", json=request.dict())
     assert response.status_code == 200
