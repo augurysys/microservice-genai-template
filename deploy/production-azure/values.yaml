@@ -5,7 +5,6 @@ image:
 envVars:
   azureDeployment: gpt-4o
   openaiModelVersion: 2023-03-15-preview
-  azureOpenaiEndpoint: https://augury-gen-ai.openai.azure.com/
   langchainTracing: "true"
 nodeSelector:
   data-micrsoservices-node: 'true'
