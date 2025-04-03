@@ -47,6 +47,8 @@ spec:
             - configMapRef:
                 name: {{ .Chart.Name }}
             - secretRef:
+                name: augury-common-genai
+            - secretRef:
                 name: {{ .Chart.Name }}
             # bring common environment variables
             - configMapRef:

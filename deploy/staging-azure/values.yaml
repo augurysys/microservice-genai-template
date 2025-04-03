@@ -5,7 +5,6 @@ image:
 envVars:
   azureDeployment: gpt-4o
   openaiModelVersion: 2023-03-15-preview
-  azureOpenaiEndpoint: https://aiva-dev-resource.openai.azure.com/
   langchainTracing: "false"
 api:
   replicaCount: 0
